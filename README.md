@@ -1,1 +1,1 @@
-Режим вывода команд на экран (ECHO) включен.
+fastYoutube project fo╨║ 3 days.
