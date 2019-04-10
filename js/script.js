@@ -1,7 +1,7 @@
 const switcher = document.querySelector('#cbx'),
-   more = document.querySelector('.more'),
-   modal = document.querySelector('.modal'),
-   videos = document.querySelectorAll('.video__item');
+      more = document.querySelector('.more'),
+      modal = document.querySelector('.modal'),
+      videos = document.querySelectorAll('.videos__item');
 let player;
 
 function bindSlideToggle(trigger, boxBody, content, openClass) {
@@ -44,7 +44,7 @@ function switchMode() {
       });
 
       document.querySelector('.header__item-descr').style.color = '#fff';
-      document.querySelector('.logo > img').src = '/logo/youtube_night.svg';
+      document.querySelector('.logo > img').src = 'logo/youtube_night.svg';
    } else {
       night = false;
       document.body.classList.remove('night');
@@ -61,7 +61,7 @@ function switchMode() {
       });
 
       document.querySelector('.header__item-descr').style.color = '#000';
-      document.querySelector('.logo > img').src = '/logo/youtube.svg';
+      document.querySelector('.logo > img').src = 'logo/youtube.svg';
    }
 }
 
@@ -73,8 +73,8 @@ switcher.addEventListener('change', () => {
 const data = [
    ['img/thumb_3.webp', 'img/thumb_4.webp', 'img/thumb_5.webp'],
    ['#3 Верстка на flexbox CSS | Блок преимущества и галерея | Марафон верстки | Артем Исламов',
-      '#2 Установка spikmi и работа с ветками на Github | Марафон вёрстки Урок 2',
-      '#1 Верстка реального заказа landing Page | Марафон вёрстки | Артём Исламов'
+   '#2 Установка spikmi и работа с ветками на Github | Марафон вёрстки Урок 2',
+   '#1 Верстка реального заказа landing Page | Марафон вёрстки | Артём Исламов'
    ],
    ['3,6 тыс.просмотров', '4,2 тыс.просмотров', '28 тыс.просмотров'],
    ['X9SmcY3lM-U', '7BvHoh0BrMw', 'mC8JW_aG2EM']
@@ -90,16 +90,90 @@ more.addEventListener('click', () => {
       card.setAttribute('data-url', data[3][i]);
       card.innerHTML = `
          <img src="${data[0][i]}" alt="thumb">
-         <div class = "videos__item-descr">
-            ${data[0][i]}
+         <div class="videos__item-descr">
+            ${data[1][i]}
          </div>
-         <div class = "videos__item-views">
-            ${data[0][i]}
+         <div class="videos__item-views">
+            ${data[2][i]}
          </div>
       `;
       videosWrapper.appendChild(card);
       setTimeout(() => {
          card.classList.remove('videos__item-active');
       }, 10);
+      bindNewModal(card);
+   }
+
+   sliceTitle('.videos__item-descr', 100);
+});
+
+function sliceTitle(selector, count) {
+   document.querySelectorAll(selector).forEach(item => {
+      item.textContent.trim();
+
+      if (item.textContent.length < count) {
+         return;
+      } else {
+         const str = item.textContent.slice(0, count + 1) + "...";
+         item.textContent = str;
+      }
+   });
+}
+sliceTitle('.videos__item-descr', 100);
+
+function openModal() {
+   modal.style.display = 'block';
+}
+
+function closeModal() {
+   modal.style.display = 'none';
+   player.stopVideo();
+}
+
+function bindModal(cards) {
+   cards.forEach(item => {
+      item.addEventListener('click', (e) => {
+         e.preventDefault();
+         const id = item.getAttribute('data-url');
+         loadVideo(id);
+         openModal();
+      });
+   });
+}
+bindModal(videos);
+
+function bindNewModal(cards) {
+   cards.addEventListener('click', (e) => {
+         e.preventDefault();
+         const id = cards.getAttribute('data-url');
+         loadVideo(id);
+         openModal();
+   });
+}
+
+modal.addEventListener('click', (e) => {
+   if (!e.target.classList.contains('modal__body')) {
+      closeModal();
    }
 });
+
+function createVideo() {
+   var tag = document.createElement('script');
+
+   tag.src = "https://www.youtube.com/iframe_api";
+   var firstScriptTag = document.getElementsByTagName('script')[0];
+   firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+   setTimeout(() => {
+      player = new YT.Player('frame', {
+         height: '100%',
+         width: '100%',
+         videoId: 'M7lc1UVf-VE'
+   });
+   }, 300);
+}
+createVideo();
+
+function loadVideo(id) {
+   player.loadVideoById({'videoId': `${id}`});
+}
